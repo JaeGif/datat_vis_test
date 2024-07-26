@@ -5,7 +5,7 @@ export default function Experience() {
   return (
     <>
       <Perf position={'top-left'} />
-      <OrbitControls makeDefault maxPolarAngle={Math.PI / 2} maxZoom={0.1} />
+      <OrbitControls makeDefault />
       <ambientLight intensity={2} />
       <mesh>
         <boxGeometry />

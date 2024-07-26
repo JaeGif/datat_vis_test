@@ -1,0 +1,4 @@
+{
+  "nodes": [{ "id": "string<id>", "data": "any<object>" }],
+  "links": [{ "source": "id<string>", "target": "id<string>" }]
+}
