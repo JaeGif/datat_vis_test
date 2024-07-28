@@ -1,8 +1,8 @@
 import React from 'react';
 
-function ForwardIcon() {
+function ForwardIcon({ handleClick }) {
   return (
-    <div>
+    <div onClick={handleClick} className='cursor-pointer'>
       <img className='h-10 rotate-180' src='/assets/arrow.png' />
     </div>
   );

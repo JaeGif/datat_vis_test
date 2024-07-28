@@ -2,11 +2,17 @@ import React from 'react';
 import BackIcon from './icons/BackIcon';
 import ForwardIcon from './icons/ForwardIcon';
 
-function Header({ isOpen }) {
+function Header({ isOpen, handleToggleModal }) {
   return (
-    <span>
+    <span className='flex justify-center items-center p-5'>
       <h1 className='text-3xl'>Dashboard</h1>
-      <div>{isOpen ? <BackIcon /> : <ForwardIcon />}</div>
+      {/*       <div>
+        {isOpen ? (
+          <BackIcon handleClick={handleToggleModal} />
+        ) : (
+          <ForwardIcon handleClick={handleToggleModal} />
+        )}
+      </div> */}
     </span>
   );
 }
