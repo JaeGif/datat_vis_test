@@ -1,21 +1,20 @@
-import React, { useCallback, useRef } from 'react';
-import { Canvas } from '@react-three/fiber';
-import Experience from './experience/Experience';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import ForceGraph from 'react-force-graph-3d';
-import testData from './data/test.json';
-import { Perf } from 'r3f-perf';
+import lesmisData from './data/test.json';
 
-function Graph({ sendNodeData, sendLinkData }) {
+function Graph({ sendNodeData }) {
   const fgRef = useRef();
+
   const handleNodeHover = () => {
     // popup showing data from the individual node
   };
+
   const handleNodeClick = useCallback(
     (node) => {
       console.log(node);
       // NODE INCLUDES THREE.OBJECT DATA :)
       // zoom from outside of node
-      const distance = 20;
+      const distance = 30;
       const distRatio = 1 + distance / Math.hypot(node.x, node.y, node.z);
 
       fgRef.current.cameraPosition(
@@ -33,6 +32,7 @@ function Graph({ sendNodeData, sendLinkData }) {
     },
     [fgRef]
   );
+
   const handleEdgeClick = useCallback((edge) => {
     console.log(edge);
     const edgeData = {
@@ -43,6 +43,10 @@ function Graph({ sendNodeData, sendLinkData }) {
     };
     sendNodeData(edgeData);
   });
+
+  useEffect(() => {
+    console.log(fgRef.current);
+  }, [fgRef]);
 
   return (
     <div className='w-9/12'>
@@ -56,11 +60,10 @@ function Graph({ sendNodeData, sendLinkData }) {
         linkDirectionalParticles={'value'}
         linkDirectionalParticleColor={'#ff33dd'}
         linkLabel={(d) => d.source.id + ' -> ' + d.target.id}
-        linkDirectionalParticleWidth={1}
         linkDirectionalParticleResolution={16}
-        linkDirectionalParticleSpeed={(d) => d.value * 0.0001}
+        linkDirectionalParticleSpeed={(d) => d.value * 0.0007}
         nodeAutoColorBy={'group'}
-        graphData={testData}
+        graphData={lesmisData}
       />
     </div>
     /*     <Canvas

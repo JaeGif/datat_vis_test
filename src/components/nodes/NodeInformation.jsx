@@ -8,7 +8,7 @@ function NodeInformation({ data }) {
     <div>
       {dataKVArr?.map((el, i) => (
         <p key={i}>
-          {el[0]} : {el[1]}
+          {el[0].toUpperCase()} : {el[1]}
         </p>
       ))}
     </div>

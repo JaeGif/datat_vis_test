@@ -1,11 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useReducer } from 'react';
 import Graph from './Graph';
 import Dashboard from './components/Dashboard';
 
 function App() {
   const [nodeData, setNodeData] = useState(null);
-
-  const [displayData, setDisplayData] = useState();
 
   const getNodeData = (data) => {
     setNodeData(data);
