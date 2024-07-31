@@ -83,16 +83,18 @@ function Graph({ sendNodeData }) {
       const group = Math.floor(Math.random() * 10);
       // make a unique new id
 
+      const newLinks = [];
+      for (let i = 0; i < Math.floor(Math.random() * 3 + 1); i++) {
+        newLinks.push({
+          source: id,
+          target: nodes[Math.round(Math.random() * nodes.length - 1)].id,
+          value: Math.floor(Math.random() * 40),
+        });
+      }
+
       return {
         nodes: [...nodes, { id, group }],
-        links: [
-          ...links,
-          {
-            source: id,
-            target: nodes[Math.round(Math.random() * nodes.length - 1)].id,
-            value: Math.floor(Math.random() * 40),
-          },
-        ],
+        links: [...links, ...newLinks],
       };
     });
   };
