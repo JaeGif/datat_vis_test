@@ -10,12 +10,23 @@ import {
 
 import { faker } from '@faker-js/faker';
 import NodeInformation from './components/nodes/NodeInformation';
-
+const extraRenderers = [new CSS2DRenderer()];
+const NODE_R = 4;
 function Graph({ sendNodeData }) {
-  const extraRenderers = [new CSS2DRenderer()];
-  // Points
+  /*   // highlights
+  const [highlightNodes, setHighlightNodes] = useState(new Set());
+  const [highlightLinks, setHighlightLinks] = useState(new Set());
+  const [hoverNode, setHoverNode] = useState(null);
 
+  const updateHighlight = () => {
+    setHighlightNodes(highlightNodes);
+    setHighlightLinks(highlightLinks);
+  };
+ */
+  // graph data
   const [data, setData] = useState(lesmisData);
+
+  // highlighted and selected data
   const [selectedData, setSelectedData] = useState();
   const [infoVisible, setInfoVisible] = useState();
 
@@ -28,10 +39,6 @@ function Graph({ sendNodeData }) {
     if (selectedData) setInfoVisible(true);
     else setInfoVisible(false);
   }, [selectedData]);
-
-  const handleNodeHover = () => {
-    // popup showing data from the individual node
-  };
 
   const handleNodeClick = useCallback(
     (node) => {
@@ -67,6 +74,50 @@ function Graph({ sendNodeData }) {
 
   const handleEdgeClick = useCallback((edge) => {
     console.log(edge);
+    // zoom from outside of node
+    const distance = 10000;
+    const centroid = {
+      x: (edge.source.x + edge.target.x) / 2,
+      y: (edge.source.y + edge.target.y) / 2,
+      z: (edge.source.z + edge.target.z) / 2,
+    };
+
+    // Calculate direction vector from source to target
+    const direction = {
+      x: edge.target.x - edge.source.x,
+      y: edge.target.y - edge.source.y,
+      z: edge.target.z - edge.source.z,
+    };
+
+    // To find a perpendicular vector, you can take the cross product with an arbitrary vector
+    const arbitraryVector = { x: 0, y: 1, z: 0 }; // You can change this to { x: 1, y: 0, z: 0 } if necessary
+    const perpendicular = {
+      x: direction.y * arbitraryVector.z - direction.z * arbitraryVector.y,
+      y: direction.z * arbitraryVector.x - direction.x * arbitraryVector.z,
+      z: direction.x * arbitraryVector.y - direction.y * arbitraryVector.x,
+    };
+
+    // Normalize perpendicular vector to unit length
+    const length = Math.sqrt(
+      perpendicular.x ** 2 + perpendicular.y ** 2 + perpendicular.z ** 2
+    );
+    const unitPerpendicular = {
+      x: perpendicular.x / length,
+      y: perpendicular.y / length,
+      z: perpendicular.z / length,
+    };
+    const distRatio =
+      1 + distance / Math.hypot(centroid.x, centroid.y, centroid.z);
+
+    fgRef.current.cameraPosition(
+      {
+        x: centroid.x - unitPerpendicular.x * distRatio,
+        y: centroid.y - unitPerpendicular.y * distRatio,
+        z: centroid.z - unitPerpendicular.z * distRatio,
+      }, // new position
+      centroid, // lookAt ({ x, y, z })
+      2000 // ms transition duration
+    );
     const edgeData = {
       type: 'edge',
       source: edge.source.id,
@@ -83,6 +134,7 @@ function Graph({ sendNodeData }) {
       const group = Math.floor(Math.random() * 10);
       // make a unique new id
 
+      // add random links
       const newLinks = [];
       for (let i = 0; i < Math.floor(Math.random() * 3 + 1); i++) {
         newLinks.push({
@@ -98,13 +150,48 @@ function Graph({ sendNodeData }) {
       };
     });
   };
-  const geometries = [];
-  const material = [];
+
+  /*   const handleNodeHover = (node) => {
+    highlightNodes.clear();
+    highlightLinks.clear();
+    if (node) {
+      highlightNodes.add(node);
+    }
+
+    setHoverNode(node || null);
+    updateHighlight();
+  };
+
+  const handleLinkHover = (link) => {
+    highlightNodes.clear();
+    highlightLinks.clear();
+
+    if (link) {
+      highlightLinks.add(link);
+      highlightNodes.add(link.source);
+      highlightNodes.add(link.target);
+    }
+
+    updateHighlight();
+  };
+
+  const paintRing = useCallback(
+    (node, ctx) => {
+      // add ring just for highlighted nodes
+      ctx.beginPath();
+      ctx.arc(node.x, node.y, NODE_R * 1.4, 0, 2 * Math.PI, false);
+      ctx.fillStyle = node === hoverNode ? 'red' : 'orange';
+      ctx.fill();
+    },
+    [hoverNode]
+  );
+ */
   return (
     <div className='relative'>
       {infoVisible && <NodeInformation data={selectedData} />}
 
       <ForceGraph
+        nodeRelSize={NODE_R}
         onBackgroundClick={() => setSelectedData(null)}
         extraRenderers={extraRenderers}
         onBackgroundRightClick={() => {
@@ -113,6 +200,17 @@ function Graph({ sendNodeData }) {
         }}
         ref={fgRef}
         nodeLabel='id'
+        /*         autoPauseRedraw={false}
+        linkWidth={(link) => (highlightLinks.has(link) ? 5 : 1)}
+        linkDirectionalParticleWidth={(link) =>
+          highlightLinks.has(link) ? 4 : 0
+        }
+        nodeCanvasObjectMode={(node) =>
+          highlightNodes.has(node) ? 'before' : undefined
+        }
+        nodeCanvasObject={paintRing}
+        onNodeHover={handleNodeHover}
+        onLinkHover={handleLinkHover} */
         /*         nodeThreeObject={({ group }) =>
           new THREE.Mesh(
             [
