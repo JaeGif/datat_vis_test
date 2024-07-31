@@ -11,7 +11,8 @@ function App() {
 
   return (
     <div className='h-screen w-screen flex justify-center items-center'>
-      <Dashboard data={nodeData} />
+      {/*       <Dashboard data={nodeData} />
+       */}
       <Graph sendNodeData={getNodeData} />
     </div>
   );
